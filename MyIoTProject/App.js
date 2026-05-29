@@ -1,5 +1,21 @@
+if (typeof global.DOMException === 'undefined') {
+  global.DOMException = class DOMException extends Error {
+    constructor(message, name) {
+      super(message);
+      this.name = name || 'DOMException';
+    }
+  };
+}
+
 import React, { useState, useEffect } from 'react';
-import { env } from 'expo-env';
+
+import {
+  MQTT_HOST,
+  MQTT_PASS,
+  MQTT_PATH,
+  MQTT_PORT,
+  MQTT_USER,
+} from '@env';
 import { StyleSheet, View, Text, FlatList, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MQTTService from './src/services/mqttService';
@@ -17,13 +33,14 @@ export default function App() {
   const [hum, setHum] = useState(0);
   const [history, setHistory] = useState([]);
 
+  // Configuração mapeada exatamente do seu novo .env
   const mqttConfig = {
-    host: env.MQTT_HOST,
-    port: parseInt(env.MQTT_PORT),
-    path: env.MQTT_PATH,
-    user: env.MQTT_USER,
-    pass: env.MQTT_PASS,
-    clientId: 'RN_App_' + Math.random(),
+    host: MQTT_HOST,
+    port: MQTT_PORT, // O service agora valida se é string ou número
+    path: MQTT_PATH,
+    user: MQTT_USER,
+    pass: MQTT_PASS,
+    clientId: 'RN_App_' + Math.random().toString(16).substr(2, 4), // Tratado para evitar pontos flutuantes no ID
   };
 
   useEffect(() => {
